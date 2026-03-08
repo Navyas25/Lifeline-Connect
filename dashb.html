@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Blood Bank Dashboard</title>
+
+<link rel="stylesheet" href="dash.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+
+<div class="sidebar">
+
+<h2><i class="fa-solid fa-droplet"></i> Blood Bank</h2>
+
+<a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+<a href="donordd.html"><i class="fa-solid fa-user"></i> Donors</a>
+<a href="hospital.html"><i class="fa-solid fa-hospital"></i> Hospitals</a>
+
+</div>
+
+<!-- MAIN CONTENT -->
+
+<div class="main">
+
+<h1>Dashboard</h1>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Donors</h3>
+<h2 id="donorCount">0</h2>
+</div>
+
+<div class="card">
+<h3>Total Requests</h3>
+<h2 id="requestCount">0</h2>
+</div>
+
+<div class="card">
+<h3>Emergency Requests</h3>
+<h2 id="emergencyCount">0</h2>
+</div>
+
+<div class="card">
+<h3>Hospitals</h3>
+<h2 id="hospitalCount">0</h2>
+</div>
+
+</div>
+
+<!-- REQUEST TABLE -->
+
+<h2 class="title">Recent Blood Requests</h2>
+
+<div class="table-box">
+
+<table id="requestTable">
+
+<tr>
+<th>Patient</th>
+<th>Blood Group</th>
+<th>Hospital</th>
+<th>Contact</th>
+<th>Status</th>
+</tr>
+
+</table>
+
+</div>
+
+<!-- DONOR LIST -->
+
+<h2 class="title">Available Donors</h2>
+
+<div id="donorList" class="donor-list"></div>
+
+</div>
+
+<script>
+
+async function loadDonors(){
+
+const res = await fetch("http://localhost:5000/api/donors");
+const donors = await res.json();
+
+document.getElementById("donorCount").innerText = donors.length;
+
+let html = "";
+
+donors.forEach(donor => {
+
+html += `
+<div class="donor-card">
+<h3>${donor.name}</h3>
+<p>Blood Group: <b>${donor.bloodGroup}</b></p>
+<p>City: ${donor.city}</p>
+</div>
+`;
+
+});
+
+document.getElementById("donorList").innerHTML = html;
+
+}
+
+
+
+async function loadEmergency(){
+
+const res = await fetch("http://localhost:5000/api/emergency");
+const data = await res.json();
+
+document.getElementById("emergencyCount").innerText = data.length;
+document.getElementById("requestCount").innerText = data.length;
+
+let table = `
+<tr>
+<th>Patient</th>
+<th>Blood Group</th>
+<th>Hospital</th>
+<th>Contact</th>
+<th>Status</th>
+</tr>
+`;
+
+data.forEach(e => {
+
+table += `
+<tr>
+<td>${e.patientName}</td>
+<td>${e.bloodGroup}</td>
+<td>${e.hospital}</td>
+<td>${e.contact}</td>
+<td style="color:red;font-weight:bold;">URGENT</td>
+</tr>
+`;
+
+});
+
+document.getElementById("requestTable").innerHTML = table;
+
+}
+
+
+
+async function loadHospitals(){
+
+const res = await fetch("http://localhost:5000/api/hospitals");
+const hospitals = await res.json();
+
+document.getElementById("hospitalCount").innerText = hospitals.length;
+
+}
+
+
+
+loadDonors();
+loadEmergency();
+loadHospitals();
+
+</script>
+
+</body>
+</html>

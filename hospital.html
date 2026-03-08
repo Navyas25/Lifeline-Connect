@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Hospital Registration</title>
+
+<link rel="stylesheet" href="hospital.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<div class="navbar">
+
+<a href="index.html" class="nav-item">
+<i class="fa-solid fa-house"></i> Home
+</a>
+
+<a href="dashb.html" class="nav-item">
+<i class="fa-solid fa-chart-line"></i> Dashboard
+</a>
+
+<a href="hospital.html" class="nav-item active">
+<i class="fa-solid fa-hospital"></i> Hospital
+</a>
+
+</div>
+
+
+<h1>Hospital Registration</h1>
+
+
+<!-- FORM CARD -->
+
+<div class="form-card">
+
+<h2>Register a New Hospital</h2>
+
+<form id="hospitalForm">
+
+<input type="text" id="hospitalName" placeholder="Hospital Name" required>
+
+<input type="text" id="city" placeholder="City" required>
+
+<input type="text" id="contact" placeholder="Contact Number" required>
+
+<button type="submit">Register Hospital</button>
+
+</form>
+
+</div>
+
+
+
+<!-- TABLE -->
+
+<h2 class="table-title">Registered Hospitals</h2>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+
+<tr>
+<th>ID</th>
+<th>Hospital Name</th>
+<th>City</th>
+<th>Contact</th>
+</tr>
+
+</thead>
+
+<tbody id="hospitalTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+
+<script>
+
+// REGISTER HOSPITAL
+
+const form = document.getElementById("hospitalForm");
+
+form.addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const hospitalData = {
+
+name: document.getElementById("hospitalName").value,
+city: document.getElementById("city").value,
+contact: document.getElementById("contact").value
+
+};
+
+try{
+
+const response = await fetch("http://localhost:5000/api/hospitals/register",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(hospitalData)
+
+});
+
+const data = await response.json();
+
+alert(data.message);
+
+form.reset();
+
+loadHospitals();
+
+}catch(error){
+
+console.error(error);
+
+alert("Server error");
+
+}
+
+});
+
+
+
+// LOAD HOSPITALS
+
+async function loadHospitals(){
+
+try{
+
+const response = await fetch("http://localhost:5000/api/hospitals");
+
+const hospitals = await response.json();
+
+const table = document.getElementById("hospitalTable");
+
+table.innerHTML = "";
+
+hospitals.forEach((h,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${index+1}</td>
+<td>${h.name}</td>
+<td>${h.city}</td>
+<td>${h.contact}</td>
+</tr>
+`;
+
+});
+
+}catch(error){
+
+console.error("Error loading hospitals");
+
+}
+
+}
+
+loadHospitals();
+
+</script>
+
+</body>
+</html>

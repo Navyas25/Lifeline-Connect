@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Donor Network</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#f4f6f9;
+}
+
+/* HEADER */
+
+header{
+background:#c0392b;
+color:white;
+padding:20px;
+text-align:center;
+}
+
+/* SEARCH */
+
+.search-box{
+text-align:center;
+margin:30px;
+}
+
+.search-box input{
+padding:10px;
+width:250px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+.search-box button{
+padding:10px 20px;
+background:#e74c3c;
+border:none;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+/* DONOR GRID */
+
+#donorContainer{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+padding:30px;
+}
+
+/* DONOR CARD */
+
+.card{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+text-align:center;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 6px 15px rgba(0,0,0,0.15);
+}
+
+.card h3{
+margin-bottom:10px;
+}
+
+.blood{
+color:#e74c3c;
+font-weight:bold;
+font-size:18px;
+}
+
+.contact-btn{
+margin-top:10px;
+display:inline-block;
+padding:8px 15px;
+background:#e74c3c;
+color:white;
+border-radius:6px;
+text-decoration:none;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+.search-box input{
+width:70%;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h1>🧑 Donor Network</h1>
+<p>Find blood donors instantly</p>
+</header>
+
+<div class="search-box">
+
+<input type="text" id="searchBlood" placeholder="Search Blood Group (A+, O-, etc)">
+
+<button onclick="searchDonor()">Search</button>
+
+</div>
+
+<div id="donorContainer"></div>
+
+<script>
+
+async function loadDonors(){
+
+const res = await fetch("http://localhost:5000/api/donors");
+
+const donors = await res.json();
+
+displayDonors(donors);
+
+}
+
+function displayDonors(donors){
+
+let html = "";
+
+donors.forEach(donor => {
+
+html += `
+<div class="card">
+
+<h3>${donor.name}</h3>
+
+<p class="blood">🩸 ${donor.bloodGroup}</p>
+
+<p>📍 ${donor.city}</p>
+
+<a class="contact-btn" href="tel:${donor.contact}">
+📞 Call Donor
+</a>
+
+</div>
+`;
+
+});
+
+document.getElementById("donorContainer").innerHTML = html;
+
+}
+
+async function searchDonor(){
+
+const blood = document.getElementById("searchBlood").value;
+
+const res = await fetch("http://localhost:5000/api/donors");
+
+const donors = await res.json();
+
+const filtered = donors.filter(d =>
+d.bloodGroup.toLowerCase() === blood.toLowerCase()
+);
+
+displayDonors(filtered);
+
+}
+
+loadDonors();
+
+</script>
+
+</body>
+</html>

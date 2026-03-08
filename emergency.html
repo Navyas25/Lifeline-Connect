@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergency Blood Request</title>
+
+<link rel="stylesheet" href="emergency.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- Home Button -->
+<a href="index.html" class="home-icon">
+<i class="fa-solid fa-house"></i>
+</a>
+
+<div class="wrapper">
+
+<div class="card">
+
+<h1>🚨 Emergency Blood Request</h1>
+<p class="subtitle">Request blood quickly in case of emergency</p>
+
+<form id="emergencyForm">
+
+<div class="input-group">
+<label>Patient Name</label>
+<input type="text" id="patientName" placeholder="Enter patient name" required>
+</div>
+
+<div class="input-group">
+<label>Blood Group</label>
+<select id="bloodGroup" required>
+<option value="">Select Blood Group</option>
+<option>A+</option>
+<option>A-</option>
+<option>B+</option>
+<option>B-</option>
+<option>AB+</option>
+<option>AB-</option>
+<option>O+</option>
+<option>O-</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Hospital Name</label>
+<input type="text" id="hospital" placeholder="Enter hospital name" required>
+</div>
+
+<div class="input-group">
+<label>City</label>
+<input type="text" id="city" placeholder="Enter city" required>
+</div>
+
+<div class="input-group">
+<label>Contact Number</label>
+<input type="tel" id="contact" placeholder="Enter phone number" required>
+</div>
+
+<div class="input-group">
+<label>Units Required</label>
+<input type="number" id="units" placeholder="Blood units">
+</div>
+
+<div class="input-group">
+<label>Urgency Level</label>
+<select id="urgency">
+<option>Normal</option>
+<option>Urgent</option>
+<option>Critical</option>
+</select>
+</div>
+
+<button type="submit">🚑 Request Blood Now</button>
+
+</form>
+
+</div>
+
+</div>
+
+<script>
+
+/* SUBMIT EMERGENCY REQUEST */
+
+document.getElementById("emergencyForm").addEventListener("submit", async function(e){
+
+e.preventDefault();
+
+const requestData = {
+
+patientName: document.getElementById("patientName").value,
+bloodGroup: document.getElementById("bloodGroup").value,
+hospital: document.getElementById("hospital").value,
+city: document.getElementById("city").value,
+contact: document.getElementById("contact").value,
+units: document.getElementById("units").value,
+urgency: document.getElementById("urgency").value
+
+};
+
+try{
+
+const response = await fetch("http://localhost:5000/api/emergency",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(requestData)
+});
+
+const result = await response.json();
+
+alert(result.message || "Emergency request submitted!");
+
+document.getElementById("emergencyForm").reset();
+
+}catch(error){
+
+alert("Server error. Please try again.");
+
+}
+
+});
+
+</script>
+
+</body>
+</html>

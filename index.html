@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>LifeLine Connect</title>
+
+<link rel="stylesheet" href="pront.css">
+<link rel="stylesheet" href="blood.css">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🩸 LifeLine Connect</h1>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="donor.html">Become Donor</a>
+<a href="emergency.html">Emergency</a>
+<a href="dashb.html">Dashboard</a>
+<a href="network.html">Donor Network</a>
+<a href="hospital.html" class="nav-item active">
+<i class="fa-solid fa-hospital"></i> Hospital
+</a>
+</nav>
+
+</header>
+<div id="alertBox" style="
+display:none;
+background:#ff4d4d;
+color:white;
+padding:15px;
+text-align:center;
+font-weight:bold;
+font-size:18px;
+">
+🚨 Emergency Blood Request!
+<span id="alertText"></span>
+</div>
+
+<!-- HERO SECTION -->
+
+<section class="hero">
+
+<h2>Donate Blood. Save Lives.</h2>
+
+<p>Connect donors, hospitals and patients instantly during emergencies.</p>
+
+<button class="location-btn" onclick="getLocation()">📍 Detect My Location</button>
+
+<p id="locationText"></p>
+
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="features">
+
+<div class="card">
+<h3>🧑 Donor Network</h3>
+<p>Find nearby donors instantly.</p>
+</div>
+
+<div class="card">
+<h3>⚡ Emergency Alerts</h3>
+<p>Real-time notifications to donors.</p>
+</div>
+
+<div class="card">
+<h3>📍 Smart Location</h3>
+<p>Find closest compatible donors.</p>
+</div>
+
+</section>
+
+<!-- URGENT EMERGENCY ALERT -->
+
+<section id="urgentBox" style="display:none; background:#ffdddd; padding:20px; margin:20px; border-radius:10px; text-align:center;">
+
+<h2 style="color:red;">🚨 URGENT BLOOD REQUEST</h2>
+
+<p id="urgentText"></p>
+
+</section>
+
+<footer>
+
+<p>© 2026 LifeLine Connect</p>
+
+</footer>
+
+<!-- SCRIPT -->
+<script src="http://localhost:5000/socket.io/socket.io.js"></script>
+<script>
+
+function getLocation(){
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(showPosition, showError);
+
+}else{
+
+document.getElementById("locationText").innerText =
+"Geolocation is not supported by this browser.";
+
+}
+
+}
+
+function showPosition(position){
+
+const lat = position.coords.latitude;
+const lon = position.coords.longitude;
+
+document.getElementById("locationText").innerText =
+`Latitude: ${lat} | Longitude: ${lon}`;
+
+console.log("User Location:", lat, lon);
+
+/* Send location to backend */
+
+fetch("http://localhost:5000/api/location",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body: JSON.stringify({
+latitude: lat,
+longitude: lon
+})
+});
+
+}
+
+function showError(error){
+
+document.getElementById("locationText").innerText =
+"Location access denied.";
+
+}
+
+async function loadEmergency(){
+
+try{
+
+const res = await fetch("http://localhost:5000/api/emergency");
+
+const data = await res.json();
+
+if(data.length > 0){
+
+const latest = data[0];
+
+document.getElementById("urgentBox").style.display = "block";
+
+document.getElementById("urgentText").innerText =
+`${latest.bloodGroup} blood needed at ${latest.hospital}. Contact: ${latest.contact}`;
+
+}
+
+}catch(err){
+
+console.log("Emergency load error");
+
+}
+
+}
+
+loadEmergency();
+
+
+let lastEmergencyId = null;
+
+async function checkEmergency(){
+
+try{
+
+const res = await fetch("http://localhost:5000/api/emergency");
+
+const data = await res.json();
+
+if(data.length > 0){
+
+const latest = data[0];
+
+document.getElementById("alertBox").style.display = "block";
+
+document.getElementById("alertText").innerText =
+`${latest.bloodGroup} needed at ${latest.hospital} | Contact: ${latest.contact}`;
+
+/* SHOW ALERT ONLY IF NEW */
+
+if(lastEmergencyId !== latest._id){
+
+alert(`🚨 URGENT: ${latest.bloodGroup} blood needed at ${latest.hospital}`);
+
+lastEmergencyId = latest._id;
+
+}
+
+}
+
+}catch(err){
+
+console.log("Alert error");
+
+}
+
+}
+
+setInterval(checkEmergency,5000);
+
+checkEmergency();
+const socket = io("http://localhost:5000");
+
+socket.on("newEmergency", (data) => {
+
+document.getElementById("alertBox").style.display = "block";
+
+document.getElementById("alertText").innerText =
+`${data.bloodGroup} needed at ${data.hospital} | Contact: ${data.contact}`;
+
+alert(`🚨 Emergency Blood Needed: ${data.bloodGroup}`);
+
+});
+</script>
+</body>
+</html>

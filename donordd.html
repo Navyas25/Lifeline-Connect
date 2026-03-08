@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Blood Donor List</title>
+
+<link rel="stylesheet" href="donordd.css">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+
+<a href="index.html" class="nav-item">
+<i class="fa fa-home"></i> Home
+</a>
+
+<a href="dashb.html" class="nav-item">
+<i class="fa fa-chart-line"></i> Dashboard
+</a>
+
+<a href="donordd.html" class="nav-item active">
+<i class="fa fa-droplet"></i> Donors
+</a>
+
+</div>
+
+<!-- Marquee -->
+<marquee class="marquee">
+🩸 Blood Donation Camp Today | Donate Blood Save Life | Emergency Donors Needed 🩸
+</marquee>
+
+<h1>Blood Donor List</h1>
+
+<div class="table-container">
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>Name</th>
+<th>Blood Group</th>
+<th>City</th>
+<th>Contact</th>
+</tr>
+</thead>
+
+<tbody id="donorTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<script>
+
+// LOAD DONORS FROM SERVER
+
+async function loadDonors(){
+
+try{
+
+const response = await fetch("http://localhost:5000/api/donors");
+
+const donors = await response.json();
+
+const table = document.getElementById("donorTable");
+
+table.innerHTML = "";
+
+donors.forEach((donor,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${index+1}</td>
+<td>${donor.name}</td>
+<td>${donor.bloodGroup}</td>
+<td>${donor.city}</td>
+<td>${donor.contact}</td>
+</tr>
+`;
+
+});
+
+}catch(error){
+
+console.error("Error loading donors:", error);
+
+}
+
+}
+
+loadDonors();
+
+</script>
+
+</body>
+</html>

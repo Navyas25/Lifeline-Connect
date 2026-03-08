@@ -1,0 +1,109 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:#f4f6f9;
+text-align:center;
+}
+
+/* Navbar */
+
+.navbar{
+background:#c40000;
+padding:15px;
+display:flex;
+justify-content:center;
+gap:30px;
+}
+
+.nav-item{
+color:white;
+text-decoration:none;
+font-size:18px;
+font-weight:bold;
+padding:8px 15px;
+border-radius:5px;
+transition:0.3s;
+}
+
+.nav-item:hover{
+background:white;
+color:#c40000;
+}
+
+.active{
+background:white;
+color:#c40000;
+}
+
+/* Marquee */
+
+.marquee{
+background:#8b0000;
+color:white;
+padding:10px;
+font-size:18px;
+}
+
+/* Title */
+
+h1{
+margin:25px;
+color:#c40000;
+}
+
+/* Table container */
+
+.table-container{
+width:90%;
+height:400px;
+margin:auto;
+background:white;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+overflow-y:auto;
+}
+
+/* Table */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+/* Header */
+
+th{
+background:#c40000;
+color:white;
+padding:12px;
+position:sticky;
+top:0;
+z-index:10;
+}
+/* Table cells */
+
+td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:center;
+vertical-align:middle;
+height:45px;
+}
+
+/* Hover effect */
+
+tr:hover{
+background:#f5f5f5;
+}
+
+/* Blood group color */
+
+td:nth-child(3){
+color:#c40000;
+font-weight:bold;
+}
